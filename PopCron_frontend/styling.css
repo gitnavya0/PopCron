@@ -1,0 +1,26 @@
+button {
+    background: #0066A2;
+    color: white;
+    border-style: outset;
+    border-color: #0066A2;
+    height: 30px;
+    width: 100px;
+    font: bold15px arial, sans-serif;
+    text-shadow: none;
+}
+
+body {
+    background-color: rgba(226, 245, 250, 0.659);
+}
+
+h1 {
+    background-color: rgb(22, 153, 234);
+}
+
+form {
+    width: 400px;
+    height: 140px;
+    outline-width: 1px;
+    outline-style: solid;
+    outline-offset: 10px;
+}
