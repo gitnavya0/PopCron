@@ -11,16 +11,15 @@ mongoose.connect('mongodb://localhost:27017/crons', {
             description: String,
             url: String,
             time: String,
-            next_execution_time: String,
-            priority: Number
+            next_execution_time: String
         });
 
         const job = mongoose.model('job', jobSchema);
 
         const jobsToAdd = [
-            { description: 'hit google At 04:05 on Sunday', url: 'www.google.com', time: '5 4 * * sun', next_execution_time: "-", priority: " " },
-            { description: 'hit youtube At 14:15 on day-of-month 1.', url: 'www.youtube.com', time: '15 14 1 * *', next_execution_time: "-", priority: " " },
-            { description: 'hit ....', url: 'this is the url', time: '*****', next_execution_time: "-", priority: " " },
+            { description: 'hit google At 04:05 on Sunday', url: 'www.google.com', time: '5 4 * * sun', next_execution_time: "-"},
+            { description: 'hit youtube At 14:15 on day-of-month 1.', url: 'www.youtube.com', time: '15 14 1 * *', next_execution_time: "-"},
+            { description: 'hit ....', url: 'this is the url', time: '*****', next_execution_time: "-"},
         ];
 
         return job.insertMany(jobsToAdd)
