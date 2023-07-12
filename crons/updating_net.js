@@ -13,8 +13,7 @@ const Jobschema = new mongoose.Schema({
     description: String,
     time: String,
     url: String,
-    next_execution_time: String,
-    priority: Number
+    next_execution_time: String
 });
 
 const Job = mongoose.model('Job', Jobschema);
