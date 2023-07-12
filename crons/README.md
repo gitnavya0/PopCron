@@ -15,5 +15,3 @@ const jobSchema = new mongoose.Schema({
 ```next_execution.js``` - simply returns the next execution time directly from the interval.next() call without converting it to an ISO string with the toISOString() method. This will provide a valid date object that JavaScript's Date can parse. 
 
 ```updating_net.js``` - calculates the next execution time for each job using the function from the above file and updates it in the database. 
-
-```set_priority.js``` - sets a priority to each job with the highest being 1 for the job to be executed next. it them sorts the jobs in ascending order. 
