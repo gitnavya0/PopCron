@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 
-const mongoURI = 'mongodb+srv://navya2govil:homework@cluster0.xwmgvag.mongodb.net/POPCRON?retryWrites=true&w=majority';
+const mongoURI = 'mongodb+srv://<username>:<password>@cluster0.xwmgvag.mongodb.net/POPCRON?retryWrites=true&w=majority';
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
