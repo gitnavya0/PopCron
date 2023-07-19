@@ -171,7 +171,7 @@
                 <td>
                     <form action="/delete" method="post">
                         <input type="hidden" name="id" value="<%= job._id %>">
-                        <button type="submit">Delete</button>
+                        <button type="submit" onclick="showAlert()">Delete</button>
                     </form>
                 </td>
             </tr>
@@ -192,6 +192,9 @@
                 timeDateFields.style.display = "none";
                 cronFields.style.display = "block";
             }
+        }
+        function showAlert() {
+            alert("Document deleted!");
         }
     </script>
 </body>
