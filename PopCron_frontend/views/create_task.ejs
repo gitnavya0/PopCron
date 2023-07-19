@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Task Form and List</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            width: 400px;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(108, 163, 177, 0.738);
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: left;
+        }
+        tr.event {
+        background-color: rgba(108, 163, 177, 0.17);
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/" method="post">
+        <h2>Create a Task</h2>
+
+        <label for="taskType">Task Type:</label>
+        <select id="taskType" name= "taskType" onchange="showFields()">
+            <option value="event">Event</option>
+            <option value="cron">Cron</option>
+        </select>
+
+        <br><br>
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title"required>
+
+        <br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <br><br>
+
+        <label for="url">URL:</label>
+        <input type="text" id="url" name="url" required>
+
+        <br><br>
+
+        <div id="timeDateFields" style="display: none;">
+            <label for="time">Time (format - hh:mm) :</label>
+            <input type="text" id="time" name="time">
+
+            <br><br>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date">
+
+            <br><br>
+
+        </div>
+        <div id="cronFields" style="display: none;">
+            <label for="cronExpression">Cron Expression:</label>
+            <input type="text"  name="cron_exp">
+
+            <br><br>
+
+        </div>
+        <input type="submit" value="Submit">
+
+    </form>
+
+    <h3>List of Tasks Created:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>URL</th>
+                <th>Time</th>
+                <th>Scheduled at</th>
+                <th>Status</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% jobs.forEach(job => { %>
+            <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
+                <td><%= job.taskType %></td>
+                <td><%= job.title %></td>
+                <td><%= job.description %></td>
+                <td><%= job.url %></td>
+                <td>
+                    <% if (job.time) { %>
+                        <%= job.time %>
+                        <% if (job.date) { %>
+                            <%= job.date %>
+                        <% } %>
+                    <% } else if (job.cron_exp) { %>
+                        <%= job.cron_exp %>
+                    <% } %>
+                </td>
+                <td><%= job.schedule %></td>
+                <td><%= job.status %></td>
+                <td><!-- delete button --></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <script>
+        function showFields() {
+            var taskType = document.getElementById("taskType").value;
+            var timeDateFields = document.getElementById("timeDateFields");
+            var cronFields = document.getElementById("cronFields");
+
+            if (taskType === "event") {
+                timeDateFields.style.display = "block";
+                cronFields.style.display = "none";
+            } else if (taskType === "cron") {
+                timeDateFields.style.display = "none";
+                cronFields.style.display = "block";
+            }
+        }
+    </script>
+</body>
+
+</html>
