@@ -11,7 +11,7 @@
             font-family: Arial, sans-serif;
         }
 
-        form {
+        form.main {
             width: 400px;
             padding: 20px;
             background-color: #f2f2f2;
@@ -47,6 +47,22 @@
             cursor: pointer;
         }
 
+        button[type="submit"] {
+            border: 0;
+            outline: 0;
+            cursor: pointer;
+            color: rgb(0, 0, 0);
+            background-color: rgba(108, 163, 177, 0.738);
+            box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 4px 8px;
+            display: inline-block;
+            min-height: 28px;
+            transition: background-color .24s,box-shadow .24s;           
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -70,7 +86,7 @@
 </head>
 
 <body>
-    <form action="/" method="post">
+    <form class="main" action="/" method="post">
         <h2>Create a Task</h2>
 
         <label for="taskType">Task Type:</label>
