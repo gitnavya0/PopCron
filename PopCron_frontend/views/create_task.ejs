@@ -152,7 +152,12 @@
                 </td>
                 <td><%= job.schedule %></td>
                 <td><%= job.status %></td>
-                <td><!-- delete button --></td>
+                <td>
+                    <form action="/delete" method="post">
+                        <input type="hidden" name="id" value="<%= job._id %>">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             <% }) %>
         </tbody>
