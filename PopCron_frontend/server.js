@@ -43,6 +43,13 @@ app.post('/', (req, res) => {
         });
 });
 
+app.post('/delete', async (req, res) => {
+    const { id } = req.body;
+    await Job.findByIdAndDelete(id);
+    res.redirect('/');
+  });
+
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
