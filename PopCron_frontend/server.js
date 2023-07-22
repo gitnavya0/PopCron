@@ -1,7 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cronParser = require('cron-parser');
-const CronValidator = require('cron-validator');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 
@@ -51,19 +49,17 @@ app.post('/', async (req, res) => {
     const job = new Job({ taskType, title, description, url, time, date, cron_exp });
 
     if (taskType === 'event') {
-        // Validate time and date format for events
         const timePattern = /^([0-1]?[0-9]|2[0-3])[.:][0-5][0-9]$/;
-        const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-        if (!timePattern.test(time) || !datePattern.test(date)) {
-            res.send('<script>alert("Invalid time or date format. Please use hh:mm for time and YYYY-MM-DD for date."); window.location.href="/";</script>');
+        if (!timePattern.test(time)) {
+            res.send('<script>alert("Invalid time. Please use hh:mm or hh.mm"); window.location.href="/";</script>');
             return;
         }
 
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
     } else if (taskType === 'cron') {
-        // Validate cron expression for cron tasks
-        const cronPattern = /^((\*|[0-5]?\d|\d+(?:-\d+)?|\*\/\d+)(,(\*|[0-5]?\d|\d+(?:-\d+)?|\*\/\d+))*)\s+((\*|[0-1]?\d|2[0-3])(,(\*|[0-1]?\d|2[0-3]))*)\s+((\*|[1-9]|[1-2]\d|3[0-1])(,(\*|[1-9]|[1-2]\d|3[0-1]))*)\s+((\*|[1-9]|1[0-2])(,(\*|[1-9]|1[0-2]))*)\s+((\*|[0-6])(,(\*|[0-6]))*)$/;
+        
+        const cronPattern = /^((\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+))(,(?:\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+)))*)(?:\s+((\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+))(,(?:\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+))(,(?:\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+))(,(?:\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+)))*))?(?:\s+((\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+))(,(?:\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+)))*))?$/;
 
         if (!cronPattern.test(cron_exp)) {
             res.send('<script>alert("Invalid cron expression format. Please provide a valid cron expression."); window.location.href="/";</script>');
