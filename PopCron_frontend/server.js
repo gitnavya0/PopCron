@@ -16,8 +16,8 @@ const jobSchema = new mongoose.Schema({
     description: String,
     url: String,
     time: String,
-    date: String,
     cron_exp: String,
+    date: String,
     schedule: {
         type: String,
         default: null,
@@ -26,7 +26,9 @@ const jobSchema = new mongoose.Schema({
         type: String,
         default: null,
     }
+
 });
+
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,37 +36,46 @@ const Job = mongoose.model('Job', jobSchema);
 
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
+app.get('/', (req, res , next) => {
     Job.find()
         .then(jobs => {
             res.render('create_task', { jobs });
         });
 });
 
-app.post('/', (req, res) => {
+
+app.post('/', async (req, res) => {
     const { taskType, title, description, url, time, date, cron_exp } = req.body;
     const job = new Job({ taskType, title, description, url, time, date, cron_exp });
 
-    job.save()
-        .then(async (savedJob) => {
-            if (taskType === 'cron') {
-                const nextCronExecutionTime = getNextCronExecutionTime(cron_exp);
-                await Job.findByIdAndUpdate(
-                    savedJob._id,
-                    { schedule: nextCronExecutionTime },
-                    { new: true }
-                );
-            }
-            else if (taskType === 'event') {
-                const nextEventExecutionTime = getNextEventExecutionTime(time, date);
-                await Job.findByIdAndUpdate(
-                    savedJob._id,
-                    { schedule: nextEventExecutionTime },
-                    { new: true }
-                );
-            }
-            res.redirect('/');
-        });
+    if (taskType === 'event') {
+        const timePattern = /^([0-1]?[0-9]|2[0-3])[.:][0-5][0-9]$/;
+        if (!timePattern.test(time)) {
+            res.send('<script>alert("Invalid time. Please use hh:mm or hh.mm"); window.location.href="/";</script>');
+            return;
+        }
+
+        const nextEventExecutionTime = getNextEventExecutionTime(time, date);
+        job.schedule = nextEventExecutionTime;
+    } else if (taskType === 'cron') {
+        
+        const cronPattern = /^((\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+))(,(?:\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+)))*)(?:\s+((\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+))(,(?:\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+))(,(?:\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+))(,(?:\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+)))*))?(?:\s+((\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+))(,(?:\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+)))*))?$/;
+
+        if (!cronPattern.test(cron_exp)) {
+            res.send('<script>alert("Invalid cron expression format. Please provide a valid cron expression."); window.location.href="/";</script>');
+            return;
+        }
+        const nextCronExecutionTime = getNextCronExecutionTime(cron_exp);
+        job.schedule = nextCronExecutionTime;
+    }
+
+    try {
+        await job.save();
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
+        res.send('<script>alert("Error occurred while saving the job."); window.location.href="/";</script>');
+    }
 });
 
 app.post('/delete', async (req, res) => {
