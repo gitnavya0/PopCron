@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 
@@ -58,11 +59,10 @@ app.post('/', async (req, res) => {
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
     } else if (taskType === 'cron') {
-        
-        const cronPattern = /^((\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+))(,(?:\*|(?:[0-9]|[0-5][0-9]|(?:[0-9]|[0-5][0-9])-(?:[0-9]|[0-5][0-9]))|(?:(?:[0-9]|[0-5][0-9])\/[0-9]+)))*)(?:\s+((\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+))(,(?:\*|(?:[01]?[0-9]|2[0-3])|(?:(?:[01]?[0-9]|2[0-3])-(?:[01]?[0-9]|2[0-3]))|(?:(?:[01]?[0-9]|2[0-3])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+))(,(?:\*|(?:[1-9]|[12][0-9]|3[01])|(?:(?:[1-9]|[12][0-9]|3[01])-(?:[1-9]|[12][0-9]|3[01]))|(?:(?:[1-9]|[12][0-9]|3[01])\/[0-9]+)))*))?(?:\s+((\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+))(,(?:\*|(?:[1-9]|1[0-2])|(?:(?:[1-9]|1[0-2])-(?:[1-9]|1[0-2]))|(?:(?:[1-9]|1[0-2])\/[0-9]+)))*))?(?:\s+((\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+))(,(?:\*|(?:[0-6])|(?:(?:[0-6])-(?:[0-6]))|(?:(?:[0-6])\/[0-9]+)))*))?$/;
-
-        if (!cronPattern.test(cron_exp)) {
-            res.send('<script>alert("Invalid cron expression format. Please provide a valid cron expression."); window.location.href="/";</script>');
+        try {
+            cronParser.parseExpression(cron_exp);
+        } catch (error) {
+            res.send('<script>alert("Invalid cron expression. Please provide a valid cron expression."); window.location.href="/";</script>');
             return;
         }
         const nextCronExecutionTime = getNextCronExecutionTime(cron_exp);
