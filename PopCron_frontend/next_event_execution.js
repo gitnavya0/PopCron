@@ -1,15 +1,17 @@
 function getNextEventExecutionTime(time, date) {
-    const timePattern = /(\d+)[.:](\d+)/; // Regular expression to match time in the format hh:mm or hh.mm
+    const timePattern = /^(\d{1,2}):(\d{2})\s(AM|PM)$/i;
     const match = time.match(timePattern);
 
-    if (!match) {
-        throw new Error("Invalid time format. Please use hh:mm or hh.mm");
-    }
-    const [hour, minute] = [parseInt(match[1]), parseInt(match[2])];
+    const hour = parseInt(match[1]);
+    const minute = parseInt(match[2]);
+    const meridian = match[3].toUpperCase();
 
     let eventHour = hour;
-    if (eventHour >= 1 && eventHour <= 11) {
+
+    if (meridian === "PM" && eventHour !== 12) {
         eventHour += 12;
+    } else if (meridian === "AM" && eventHour === 12) {
+        eventHour = 0;
     }
 
     const [year, month, day] = date.split("-");
