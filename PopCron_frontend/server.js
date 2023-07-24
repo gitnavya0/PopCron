@@ -50,9 +50,9 @@ app.post('/', async (req, res) => {
     const job = new Job({ taskType, title, description, url, time, date, cron_exp });
 
     if (taskType === 'event') {
-        const timePattern = /^([0-1]?[0-9]|2[0-3])[.:][0-5][0-9]$/;
+        const timePattern = /^(\d{1,2}):(\d{2})\s(AM|PM)$/i;
         if (!timePattern.test(time)) {
-            res.send('<script>alert("Invalid time. Please use hh:mm or hh.mm"); window.location.href="/";</script>');
+            res.send('<script>alert("Invalid time. Please use hh:mm AM/PM"); window.location.href="/";</script>');
             return;
         }
 
