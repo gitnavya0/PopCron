@@ -1,8 +1,6 @@
 # Crons-scheduling-platform
 ongoing project.
 
-```popcron_frontend``` - has a frontend that is a ejs form and a table underneath the form that displays all the cron jobs in the database.
+has a frontend code that is a .ejs file in the views folder. displays a form and a table underneath the form that displays all the crons and events in the database along with their next time of execution, status and an option to delete them. 
 
 the database used- mongodb (atlas). 
-
-```crons``` - uses mongodb to manually store, calculate next execution times and set priority to the cron jobs. no frontend. 
