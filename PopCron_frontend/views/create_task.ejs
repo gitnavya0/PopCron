@@ -90,9 +90,10 @@
         <h2>Create a Task</h2>
 
         <label for="taskType">Task Type:</label>
-        <select id="taskType" name= "taskType" onchange="showFields()">
-            <option value="event">Event</option>
-            <option value="cron">Cron</option>
+        <select id="taskType" name="taskType" onchange="showFields()">
+        <option value="" disabled selected>Select</option>
+        <option value="event">Event</option>
+        <option value="cron">Cron</option>
         </select>
 
         <br><br>
