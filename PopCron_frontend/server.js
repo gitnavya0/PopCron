@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
+const { updateJobStatus } = require('./status.js');
 
 const app = express();
 const port = 3000;
@@ -30,21 +31,19 @@ const jobSchema = new mongoose.Schema({
 
 });
 
-
 app.use(express.urlencoded({ extended: true }));
 
 const Job = mongoose.model('Job', jobSchema);
 
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res , next) => {
+app.get('/', (req, res, next) => {
     Job.find()
         .then(jobs => {
+            updateJobStatus(jobs);
             res.render('create_task', { jobs });
         });
 });
-
-
 app.post('/', async (req, res) => {
     const { taskType, title, description, url, time, date, cron_exp } = req.body;
     const job = new Job({ taskType, title, description, url, time, date, cron_exp });
@@ -55,9 +54,9 @@ app.post('/', async (req, res) => {
             res.send('<script>alert("Invalid time. Please use hh:mm AM/PM"); window.location.href="/";</script>');
             return;
         }
-
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
+    
     } else if (taskType === 'cron') {
         try {
             cronParser.parseExpression(cron_exp);
@@ -86,4 +85,4 @@ app.post('/delete', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-});
+}); 
