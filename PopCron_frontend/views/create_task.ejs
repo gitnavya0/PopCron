@@ -140,6 +140,7 @@
     <table>
         <thead>
             <tr>
+                <th>Version</th>
                 <th>Type</th>
                 <th>Title</th>
                 <th>Description</th>
@@ -153,6 +154,7 @@
         <tbody>
             <% jobs.forEach(job => { %>
             <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
+                <td><%= job.version %></td>
                 <td><%= job.taskType %></td>
                 <td><%= job.title %></td>
                 <td><%= job.description %></td>
