@@ -1,39 +1,15 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 const { updateJobStatus } = require('./status.js');
+const { Job } = require('./model.js');
+const { connectToDatabase } = require('./db.js');
 
 const app = express();
 const port = 3000;
 
-const mongoURI = 'mongodb+srv://<username>:<password>@cluster0.xwmgvag.mongodb.net/POPCRON?retryWrites=true&w=majority';
-
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const jobSchema = new mongoose.Schema({
-    taskType: String,
-    title: String,
-    description: String,
-    url: String,
-    time: String,
-    cron_exp: String,
-    date: String,
-    schedule: {
-        type: String,
-        default: null,
-    },
-    status: {
-        type: String,
-        default: null,
-    }
-
-});
-
 app.use(express.urlencoded({ extended: true }));
-
-const Job = mongoose.model('Job', jobSchema);
 
 app.set('view engine', 'ejs');
 
