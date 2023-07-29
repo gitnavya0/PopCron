@@ -4,6 +4,7 @@ const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 const { updateJobStatus } = require('./status.js');
 const { Job } = require('./model.js');
+const { Completed_Jobs } = require('./completed_job_model.js');
 const { connectToDatabase } = require('./db.js');
 
 const app = express();
@@ -14,10 +15,16 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res, next) => {
-    Job.find()
-        .then(jobs => {
-            updateJobStatus(jobs);
-            res.render('create_task', { jobs });
+    Promise.all([
+        Job.find().exec(),
+        Completed_Jobs.find().exec()
+    ])
+        .then(([jobs, completed_jobs]) => {
+            res.render('create_task', { jobs, completed_jobs });
+        })
+        .catch(err => {
+            console.error('Error fetching data:', err);
+            res.status(500).send('Error fetching data');
         });
 });
 app.post('/', async (req, res) => {
