@@ -16,6 +16,15 @@ const fetchJobs = async () => {
         const query = { schedule: currentTime };
         const executable_jobs = await Job.find(query).exec();
 
+        const updated_jobs = executable_jobs.map(job => {
+            job.status = 'running';
+            return job;
+        });
+
+        for (const job of updated_jobs) {
+            await job.save();
+        }
+
         console.log('executable jobs:');
         console.log(executable_jobs);
     } catch (error) {
