@@ -40,29 +40,31 @@
         input[type="submit"] {
             width: 100%;
             padding: 10px;
+            font-size: 14px;
+            font-weight: 500;
             background-color: rgba(108, 163, 177, 0.738);
             color: rgb(0, 0, 0);
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-
         button[type="submit"] {
+            
             border: 0;
-            outline: 0;
-            cursor: pointer;
-            color: rgb(0, 0, 0);
-            background-color: rgba(108, 163, 177, 0.738);
-            box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 4px 8px;
-            display: inline-block;
-            min-height: 28px;
-            transition: background-color .24s,box-shadow .24s;           
+                    outline: 0;
+                    cursor: pointer;
+                    color: rgb(0, 0, 0);
+                    background-color: rgba(108, 163, 177, 0.738);
+                    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    padding: 4px 8px;
+                    display: inline-block;
+                    min-height: 28px;
+                    transition: background-color .24s,box-shadow .24s;
+                  
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -91,9 +93,9 @@
 
         <label for="taskType">Task Type:</label>
         <select id="taskType" name="taskType" onchange="showFields()">
-        <option value="" disabled selected>Select</option>
-        <option value="event">Event</option>
-        <option value="cron">Cron</option>
+            <option value="" disabled selected>Select</option>
+            <option value="event">Event</option>
+            <option value="cron">Cron</option>
         </select>
 
         <br><br>
@@ -182,7 +184,32 @@
         </tbody>
     </table>
 
+    <h3>List of Tasks Completed:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Version</th>
+                <th>Type</th>
+                <th>Title</th>
+                <th>URL</th>
+                <th>Last Executed At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% completed_jobs.forEach(CompletedJob => { %>
+            <tr class="<%= CompletedJob.taskType === 'event' ? 'event' : '' %>">
+                <td><%= CompletedJob.version %></td>
+                <td><%= CompletedJob.taskType %></td>
+                <td><%= CompletedJob.title %></td>
+                <td><%= CompletedJob.url %></td>
+                <td><%= CompletedJob.time %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
     <script>
+        
         function showFields() {
             var taskType = document.getElementById("taskType").value;
             var timeDateFields = document.getElementById("timeDateFields");
@@ -199,6 +226,7 @@
         function showAlert() {
             alert("Task deleted!");
         }
+
     </script>
 </body>
 
