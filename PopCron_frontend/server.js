@@ -39,6 +39,8 @@ app.post('/', async (req, res) => {
     const { taskType, title, description, url, time, date, cron_exp } = req.body;
     const job = new Job({ taskType, title, description, url, time, date, cron_exp });
 
+    job.status = 'Created';
+
     if (taskType === 'event') {
         const timePattern = /^(\d{1,2}):(\d{2})\s(AM|PM)$/i;
         if (!timePattern.test(time)) {
@@ -83,3 +85,7 @@ connectToDatabase()
     .catch((err) => {
         console.error('Error starting the server:', err);
     });
+
+
+
+
