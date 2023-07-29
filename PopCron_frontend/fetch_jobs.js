@@ -19,11 +19,7 @@ const fetchJobs = async () => {
         console.log('current time:', currentTime);
         const query = { schedule: currentTime };
         const executable_jobs = await Job.find(query).exec();
-
-
         
-
-
         console.log('executable jobs:');
         console.log(executable_jobs);
 
