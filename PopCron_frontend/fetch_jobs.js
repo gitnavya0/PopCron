@@ -27,6 +27,7 @@ const fetchJobs = async () => {
 
         console.log('executable jobs:');
         console.log(executable_jobs);
+        return executable_jobs;
     } catch (error) {
         console.error('Error:', error);
     }
