@@ -30,6 +30,7 @@ const fetchJobs = async () => {
         return executable_jobs;
     } catch (error) {
         console.error('Error:', error);
+        return [];
     }
 };
 connectToDatabase();
