@@ -7,7 +7,7 @@ const { Completed_Jobs } = require('./completed_job_model.js');
 const { connectToDatabase } = require('./db.js');
 const { Worker } = require('worker_threads');
 
-const worker = new Worker('./fetch_jobs_worker.js');
+const worker = new Worker('./thread.js');
 worker.on('error', (error) => {
     console.error('Worker Error:', error);
 });
