@@ -1,12 +1,12 @@
 const { isMainThread } = require('worker_threads');
 
 if (!isMainThread) {
-    const { fetchJobs } = require('./fetch_jobs.js');
+    const { sendGetRequests } = require('./sending_get_request.js');
 
     const intervalTime = 60 * 1000; // Interval in milliseconds (1 minute)
 
     function performFetch() {
-        fetchJobs();
+        sendGetRequests();
         setTimeout(performFetch, intervalTime);
     }
 
