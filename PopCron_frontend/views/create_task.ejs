@@ -208,6 +208,8 @@
         </tbody>
     </table>
 
+    <button type="button" onclick="fetchData()">Fetch Data</button>
+
     <script>
         
         function showFields() {
@@ -225,6 +227,21 @@
         }
         function showAlert() {
             alert("Task deleted!");
+        }
+
+        async function fetchData() {
+            try {
+                // Read the URL from the input field
+                const urlToFetch = document.getElementById('url').value;
+                const response = await fetch(`/fetch-data?url=${encodeURIComponent(urlToFetch)}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const responseData = await response.text();
+                console.log("Response fetched");
+            } catch (error) {
+                console.error(error);
+            }
         }
 
     </script>
