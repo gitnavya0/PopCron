@@ -22,6 +22,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 
+// Middleware to set up CORS headers (This part allows to fetch all headers even when their official website denies the permissions)
+app.use((req, res, next) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Max-Age', 86400); // 1 day (86400 seconds)
+    next();
+});
+
 app.get('/', (req, res, next) => {
     Promise.all([
         Job.find().exec(),
@@ -72,6 +83,28 @@ app.post('/delete', async (req, res) => {
     const { id } = req.body;
     await Job.findByIdAndDelete(id);
     res.redirect('/');
+});
+
+// Endpoint to handle the fetch request from the client using GET method
+app.get('/fetch-data', async (req, res) => {
+    try {
+        const urlToFetch = req.query.url;
+
+        // Make a GET request to the specified URL
+        const fetchResponse = await fetch(urlToFetch);
+
+        // Check if the response is successful (status 200-299)
+        if (!fetchResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const responseData = await fetchResponse.text();
+        console.log("Response fetched");
+        res.send(responseData);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while fetching the data.' });
+    }
 });
 
 connectToDatabase()
