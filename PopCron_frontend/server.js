@@ -2,7 +2,6 @@ const express = require('express');
 const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
-const { updateJobStatus } = require('./status.js');
 const { Job } = require('./job_model.js');
 const { Completed_Jobs } = require('./completed_job_model.js');
 const { connectToDatabase } = require('./db.js');
