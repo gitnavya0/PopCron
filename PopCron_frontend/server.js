@@ -6,6 +6,15 @@ const { updateJobStatus } = require('./status.js');
 const { Job } = require('./model.js');
 const { Completed_Jobs } = require('./completed_job_model.js');
 const { connectToDatabase } = require('./db.js');
+const { Worker } = require('worker_threads');
+
+const worker = new Worker('./fetch_jobs_worker.js');
+worker.on('error', (error) => {
+    console.error('Worker Error:', error);
+});
+worker.on('exit', (code) => {
+    console.log(`Worker Thread Exited with Code: ${code}`);
+});
 
 const app = express();
 const port = 3000;
