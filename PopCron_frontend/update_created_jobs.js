@@ -25,7 +25,11 @@ async function updateJobs() {
 
         await Job.updateMany(
             { taskType: "event", schedule: { $lt: currentTime } },
-            { $set: { schedule: new Date(new Date(currentTime).getTime() + 1 * 60000).toISOString() } }
+            { $set: { 
+                schedule: new Date(new Date(currentTime).getTime() + 1 * 60000).toISOString(),
+                status: "rescheduled" 
+                } 
+            }
         ).exec();
     } catch (err) {
         console.error('Error updating jobs:', err);
