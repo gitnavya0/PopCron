@@ -6,6 +6,7 @@ const { Job } = require('./job_model.js');
 const { Completed_Jobs } = require('./completed_job_model.js');
 const { connectToDatabase } = require('./db.js');
 const { Worker } = require('worker_threads');
+const { updateJobs } = require("./update_created_jobs.js");
 
 const worker = new Worker('./thread.js');
 worker.on('error', (error) => {
