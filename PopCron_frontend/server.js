@@ -78,14 +78,15 @@ app.post('/delete', async (req, res) => {
 
 connectToDatabase()
     .then(() => {
-        app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
+        updateJobs().then(() => {
+            app.listen(port, () => {
+                console.log(`Server is running on port ${port}`);
+            });
         });
     })
     .catch((err) => {
         console.error('Error starting the server:', err);
     });
-
 
 
 
