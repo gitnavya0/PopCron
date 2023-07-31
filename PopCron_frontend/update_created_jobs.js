@@ -19,7 +19,11 @@ async function updateJobs() {
             const nextExecutionTime = getNextCronExecutionTime(cron.cron_exp);
             await Job.updateOne(
                 { _id: cron._id },
-                { $set: { schedule: nextExecutionTime } }
+                { $set: { 
+                    schedule: nextExecutionTime,
+                    status:"rescheduled" 
+                    } 
+                }
             ).exec();
         }
 
