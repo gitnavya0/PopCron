@@ -17,8 +17,10 @@ const fetchJobs = async () => {
         const executable_jobs = await Job.find(query).exec();
 
         console.log('executable jobs:');
-        console.log(executable_jobs);
-
+        for (const exjob of executable_jobs) {
+            console.log(exjob.title);
+        }
+        //console.log(executable_jobs);
         return executable_jobs;
     } catch (error) {
         console.error('Error:', error);
