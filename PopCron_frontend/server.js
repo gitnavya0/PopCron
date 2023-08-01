@@ -16,6 +16,18 @@ worker.on('exit', (code) => {
     console.log(`Worker Thread Exited with Code: ${code}`);
 });
 
+const handleCompletedJobVersionCleanup = async () => {
+    const cronCompletedJobsCount = await Completed_Jobs.countDocuments({ taskType: 'cron' });
+    if (cronCompletedJobsCount > MAX_COMPLETED_JOBS) {
+        const oldestCronJobs = await Completed_Jobs.find({ taskType: 'cron' })
+            .sort({ createdAt: 1 })
+            .limit(cronCompletedJobsCount - MAX_COMPLETED_JOBS);
+        const jobIdsToDelete = oldestCronJobs.map(job => job._id);
+        await Completed_Jobs.deleteMany({ _id: { $in: jobIdsToDelete } });
+        console.log(`Deleted ${jobIdsToDelete.length} completed cron jobs versions.`);
+    }
+};
+
 const app = express();
 const port = 3000;
 
@@ -23,18 +35,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res, next) => {
-    Promise.all([
-        Job.find().exec(),
-        Completed_Jobs.find().exec()
-    ])
-        .then(([jobs, completed_jobs]) => {
-            res.render('create_task', { jobs, completed_jobs });
-        })
-        .catch(err => {
-            console.error('Error fetching data:', err);
-            res.status(500).send('Error fetching data');
-        });
+app.get('/', async (req, res, next) => {
+    try {
+        await handleCompletedJobVersionCleanup(); // Add this line to clean up completed job versions
+        const [jobs, completed_jobs] = await Promise.all([
+            Job.find().exec(),
+            Completed_Jobs.find().exec()
+        ]);
+        res.render('create_task', { jobs, completed_jobs });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send('Error fetching data');
+    }
 });
 app.post('/', async (req, res) => {
     const { taskType, title, description, url, time, date, cron_exp } = req.body;
