@@ -5,7 +5,8 @@ const CompletedJobSchema = new mongoose.Schema({
     taskType: String,
     title: String,
     url: String,
-    time: String
+    time: String,
+    status: String
 });
 
 const Completed_Jobs = mongoose.model('Completed_Jobs', CompletedJobSchema);
