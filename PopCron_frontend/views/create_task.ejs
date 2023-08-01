@@ -10,6 +10,15 @@
             align-items: center;
             font-family: Arial, sans-serif;
         }
+        .radio-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .radio-container label {
+            margin-right: 10px;
+        }
 
         form.main {
             width: 400px;
@@ -21,11 +30,6 @@
 
         h2 {
             text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
         }
 
         input[type="text"],
@@ -133,6 +137,17 @@
 
             <br><br>
 
+            <label for="priority">Enter priority:</label>
+            <div class="radio-container">
+            <label for="highPriority">High</label>
+            <input type="radio" id="highPriority" name="priority" value="high">
+            <label for="lowPriority">Low</label>
+            <input type="radio" id="lowPriority" name="priority" value="low">
+            </div>
+            <p style="color: rgb(120, 118, 118); font-style: italic;"> (in case of a server reboot, high priority crons are executed as soon as server 
+                restarts and low priority ones are executed on their next time of execution.) </p>
+            <br><br>
+
         </div>
         <input type="submit" value="Submit">
 
@@ -144,6 +159,7 @@
             <tr>
                 <th>Version</th>
                 <th>Type</th>
+                <th>Priority</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>URL</th>
@@ -158,6 +174,7 @@
             <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
                 <td><%= job.version %></td>
                 <td><%= job.taskType %></td>
+                <td><%= job.priority %></td>
                 <td><%= job.title %></td>
                 <td><%= job.description %></td>
                 <td><%= job.url %></td>
@@ -190,10 +207,12 @@
             <tr>
                 <th>Version</th>
                 <th>Type</th>
+                <th>Priority</th>
                 <th>Title</th>
                 <th>URL</th>
                 <th>Last Executed At</th>
                 <th>Status</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -201,10 +220,17 @@
             <tr class="<%= CompletedJob.taskType === 'event' ? 'event' : '' %>">
                 <td><%= CompletedJob.version %></td>
                 <td><%= CompletedJob.taskType %></td>
+                <td><%= CompletedJob.priority %></td>
                 <td><%= CompletedJob.title %></td>
                 <td><%= CompletedJob.url %></td>
                 <td><%= CompletedJob.time %></td>
                 <td><%= CompletedJob.status %></td>
+                <td>
+                    <form action="/delete" method="post">
+                        <input type="hidden" name="id" value="<%= CompletedJob._id %>">
+                        <button type="submit" onclick="showAlert()">Delete</button>
+                    </form>
+                </td>
             </tr>
             <% }) %>
         </tbody>
