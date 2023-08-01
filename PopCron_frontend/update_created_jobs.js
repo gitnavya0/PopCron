@@ -14,25 +14,32 @@ async function updateJobs() {
     try {
         const currentTime = getCurrentTime();
 
-        const cronJobs = await Job.find({ taskType: "cron", schedule: { $lt: currentTime } }).exec();
+        const cronJobs = await Job.find({ taskType: "cron", schedule: { $lt: currentTime }, priority: "low" }).exec();
         for (const cron of cronJobs) {
             const nextExecutionTime = getNextCronExecutionTime(cron.cron_exp);
             await Job.updateOne(
                 { _id: cron._id },
-                { $set: { 
-                    schedule: nextExecutionTime,
-                    status:"rescheduled" 
-                    } 
+                {
+                    $set: {
+                        schedule: nextExecutionTime,
+                        status: "rescheduled"
+                    }
                 }
             ).exec();
         }
 
         await Job.updateMany(
-            { taskType: "event", schedule: { $lt: currentTime } },
-            { $set: { 
-                schedule: new Date(new Date(currentTime).getTime() + 1 * 60000).toISOString(),
-                status: "rescheduled" 
-                } 
+            {
+                $or: [
+                    { taskType: "event", schedule: { $lt: currentTime } },
+                    { taskType: "cron", schedule: { $lt: currentTime }, priority: "high" }
+                ]
+            },
+            {
+                $set: {
+                    schedule: new Date(new Date(currentTime).getTime() + 1 * 60000).toISOString(),
+                    status: "rescheduled"
+                }
             }
         ).exec();
     } catch (err) {
