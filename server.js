@@ -74,7 +74,6 @@ app.post('/', async (req, res) => {
 app.post('/delete', async (req, res) => {
     const { id } = req.body;
     await Job.findByIdAndDelete(id);
-    await Completed_Jobs.findByIdAndDelete(id);
     res.redirect('/');
 });
 
