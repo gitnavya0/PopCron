@@ -1,12 +1,19 @@
 const express = require('express');
+const { connectToDatabase } = require('./db.js');
 const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 const { Job } = require('./job_model.js');
 const { Completed_Jobs } = require('./completed_job_model.js');
-const { connectToDatabase } = require('./db.js');
 const { Worker } = require('worker_threads');
 const { updateJobs } = require("./update_created_jobs.js");
+
+const app = express();
+const port = 3000;
+
+app.use(express.urlencoded({ extended: true }));
+
+app.set('view engine', 'ejs');
 
 const worker = new Worker('./thread.js');
 worker.on('error', (error) => {
@@ -15,13 +22,6 @@ worker.on('error', (error) => {
 worker.on('exit', (code) => {
     console.log(`Worker Thread Exited with Code: ${code}`);
 });
-
-const app = express();
-const port = 3000;
-
-app.use(express.urlencoded({ extended: true }));
-
-app.set('view engine', 'ejs');
 
 app.get('/', (req, res, next) => {
     Promise.all([
@@ -36,31 +36,34 @@ app.get('/', (req, res, next) => {
             res.status(500).send('Error fetching data');
         });
 });
-app.post('/', async (req, res) => {
-    const { taskType, title, description, url, time, date, cron_exp } = req.body;
-    const job = new Job({ taskType, title, description, url, time, date, cron_exp });
 
-    job.status = 'Created';
+app.post('/', async (req, res) => {
+    const { taskType, title, description, url, time, date, cron_exp, priority } = req.body;
+    const job = new Job({ taskType, title, description, url, time, date, cron_exp, priority });
 
     if (taskType === 'event') {
         const timePattern = /^(\d{1,2}):(\d{2})\s(AM|PM)$/i;
+
         if (!timePattern.test(time)) {
-            res.send('<script>alert("Invalid time. Please use hh:mm AM/PM"); window.location.href="/";</script>');
+            res.send('<script>alert("Invalid time format. Please use hh:mm AM/PM"); window.location.href="/";</script>');
             return;
         }
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
-    
+        job.status = 'created';
+
     } else if (taskType === 'cron') {
         try {
             cronParser.parseExpression(cron_exp);
         } catch (error) {
-            res.send('<script>alert("Invalid cron expression. Please provide a valid cron expression."); window.location.href="/";</script>');
+            res.send('<script>alert("Invalid cron expression format. Please provide a valid cron expression."); window.location.href="/";</script>');
             return;
         }
         const nextCronExecutionTime = getNextCronExecutionTime(cron_exp);
         job.schedule = nextCronExecutionTime;
+        job.status = 'created';
     }
+
 
     try {
         await job.save();
@@ -74,6 +77,7 @@ app.post('/', async (req, res) => {
 app.post('/delete', async (req, res) => {
     const { id } = req.body;
     await Job.findByIdAndDelete(id);
+    await Completed_Jobs.findByIdAndDelete(id);
     res.redirect('/');
 });
 
@@ -88,6 +92,3 @@ connectToDatabase()
     .catch((err) => {
         console.error('Error starting the server:', err);
     });
-
-
-
