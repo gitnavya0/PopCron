@@ -12,6 +12,10 @@ const jobSchema = new mongoose.Schema({
     time: String,
     date: String,
     cron_exp: String,
+    priority: {
+        type: String,
+        default: "No Priority",
+    },
     schedule: {
         type: String,
         default: null,
@@ -23,5 +27,5 @@ const jobSchema = new mongoose.Schema({
 });
 
 const Job = mongoose.model('Job', jobSchema);
-
+Job.createIndexes({ schedule: 1 });
 module.exports = { Job };
