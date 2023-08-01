@@ -43,6 +43,7 @@ const sendGetRequests = async () => {
 
                     const updatedJob = new Job({
                         taskType: job.taskType,
+                        priority: job.priority,
                         title: job.title,
                         description: job.description,
                         url: job.url,
@@ -56,6 +57,7 @@ const sendGetRequests = async () => {
                     const completedJob = {
                         version: job.version - 1,
                         taskType: job.taskType,
+                        priority: job.priority,
                         title: job.title,
                         url: job.url,
                         time: new Date(),
@@ -68,6 +70,7 @@ const sendGetRequests = async () => {
                     const completedJob = {
                         version: job.version,
                         taskType: job.taskType,
+                        priority: job.priority,
                         title: job.title,
                         url: job.url,
                         time: new Date(),
