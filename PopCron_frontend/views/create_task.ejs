@@ -184,7 +184,7 @@
         </tbody>
     </table>
 
-    <h3>List of Tasks Completed:</h3>
+    <h3>List of Tasks Executed:</h3>
     <table>
         <thead>
             <tr>
@@ -193,6 +193,7 @@
                 <th>Title</th>
                 <th>URL</th>
                 <th>Last Executed At</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -203,6 +204,7 @@
                 <td><%= CompletedJob.title %></td>
                 <td><%= CompletedJob.url %></td>
                 <td><%= CompletedJob.time %></td>
+                <td><%= CompletedJob.status %></td>
             </tr>
             <% }) %>
         </tbody>
