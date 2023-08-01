@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const CompletedJobSchema = new mongoose.Schema({
     version: Number,
     taskType: String,
+    priority: String,
     title: String,
     url: String,
     time: String,
