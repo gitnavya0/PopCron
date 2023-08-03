@@ -21,8 +21,7 @@ async function updateJobs() {
                 { _id: cron._id },
                 {
                     $set: {
-                        schedule: nextExecutionTime,
-                        status: "rescheduled"
+                        schedule: nextExecutionTime
                     }
                 }
             ).exec();
@@ -37,8 +36,7 @@ async function updateJobs() {
             },
             {
                 $set: {
-                    schedule: new Date(new Date(currentTime).getTime() + 1 * 60000).toISOString(),
-                    status: "rescheduled"
+                    schedule: currentTime
                 }
             }
         ).exec();
