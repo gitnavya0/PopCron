@@ -22,7 +22,8 @@ const jobSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: null,
+        enum: ['successful', 'failed', 'pending'],
+        default: 'pending'
     }
 });
 
