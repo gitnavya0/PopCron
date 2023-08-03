@@ -1,6 +1,5 @@
 const { fetchJobs } = require('./fetch_jobs.js');
 const http = require('http');
-const { Completed_Jobs } = require('./completed_job_model.js');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { Job } = require('./job_model.js');
 
@@ -33,52 +32,31 @@ const sendGetRequests = async () => {
             } catch (error) {
                 console.error(`Error while fetching job ${_id} from URL ${url}:`, error.message);
             } finally {
-                if (job.taskType === 'cron') {
+                if (job.taskType === 'cron' && responseReceived == false) {
+                    job.status = 'failed';
+                    job.time = job.time;
+                    await job.save();
+                }
+                else if (job.taskType === 'cron' && responseReceived == true) {
                     job.version += 1;
                     job.schedule = getNextCronExecutionTime(job.cron_exp);
-
                     await job.save();
 
-                    await Job.findByIdAndRemove(_id).exec();
-
-                    const updatedJob = new Job({
-                        taskType: job.taskType,
-                        priority: job.priority,
-                        title: job.title,
-                        description: job.description,
-                        url: job.url,
-                        cron_exp: job.cron_exp,
-                        version: job.version,
-                        status: 'Created',
-                        schedule: job.schedule
-                    });
-                    await updatedJob.save();
-
-                    const completedJob = {
+                    const completedCron = {
                         version: job.version - 1,
                         taskType: job.taskType,
                         priority: job.priority,
                         title: job.title,
                         url: job.url,
                         time: new Date(),
-                        status: responseReceived ? 'successful' : 'failed'
+                        status: 'successful'
                     };
 
-                    Completed_Jobs.create(completedJob);
-                } else if (job.taskType === 'event') {
-
-                    const completedJob = {
-                        version: job.version,
-                        taskType: job.taskType,
-                        priority: job.priority,
-                        title: job.title,
-                        url: job.url,
-                        time: new Date(),
-                        status: responseReceived ? 'successful' : 'failed'
-                    };
-
-                    Completed_Jobs.create(completedJob);
-                    await Job.findByIdAndRemove(_id).exec();
+                    Job.create(completedCron);
+                }
+                else {
+                    job.status = responseReceived ? 'successful' : 'failed';
+                    await job.save();
                 }
             }
         }
