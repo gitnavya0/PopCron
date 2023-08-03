@@ -4,90 +4,94 @@
 <head>
     <title>Task Form and List</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-        }
-        .radio-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .radio-container label {
-            margin-right: 10px;
-        }
-
-        form.main {
-            width: 400px;
-            padding: 20px;
-            background-color: #f2f2f2;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        input[type="text"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            background-color: rgba(108, 163, 177, 0.738);
-            color: rgb(0, 0, 0);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button[type="submit"] {
-            
-            border: 0;
-                    outline: 0;
-                    cursor: pointer;
-                    color: rgb(0, 0, 0);
-                    background-color: rgba(108, 163, 177, 0.738);
-                    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
-                    border-radius: 4px;
-                    font-size: 14px;
-                    font-weight: 500;
-                    padding: 4px 8px;
-                    display: inline-block;
-                    min-height: 28px;
-                    transition: background-color .24s,box-shadow .24s;
-                  
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 8px;
-            border: 1px solid #ccc;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            text-align: left;
-        }
-        tr.event {
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+    
+    .radio-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .radio-container label {
+        margin-right: 10px;
+    }
+    
+    form.main {
+        width: 400px;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    h2 {
+        text-align: center;
+    }
+    
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: rgba(108, 163, 177, 0.738);
+        color: rgb(0, 0, 0);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    button[type="submit"] {
+    
+        border: 0;
+        outline: 0;
+        cursor: pointer;
+        color: rgb(0, 0, 0);
+        background-color: rgba(108, 163, 177, 0.738);
+        box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 4px 8px;
+        display: inline-block;
+        min-height: 28px;
+        transition: background-color .24s, box-shadow .24s;
+    
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th,
+    td {
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        text-align: left;
+    }
+    
+    tr.event {
         background-color: rgba(108, 163, 177, 0.17);
-        }
+    }
     </style>
 </head>
 
@@ -163,15 +167,15 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>URL</th>
-                <th>Time</th>
+                <th>Time/Cron Expression</th>
                 <th>Scheduled at</th>
                 <th>Status</th>
                 <th> </th>
             </tr>
         </thead>
         <tbody>
-            <% jobs.forEach(job => { %>
-            <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
+            <% pending_jobs.forEach(job => { %>
+            <tr class="<%= pending_jobs.taskType === 'event' ? 'event' : '' %>">
                 <td><%= job.version %></td>
                 <td><%= job.taskType %></td>
                 <td><%= job.priority %></td>
@@ -212,24 +216,41 @@
                 <th>URL</th>
                 <th>Last Executed At</th>
                 <th>Status</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            <% completed_jobs.forEach(CompletedJob => { %>
-            <tr class="<%= CompletedJob.taskType === 'event' ? 'event' : '' %>">
-                <td><%= CompletedJob.version %></td>
-                <td><%= CompletedJob.taskType %></td>
-                <td><%= CompletedJob.priority %></td>
-                <td><%= CompletedJob.title %></td>
-                <td><%= CompletedJob.url %></td>
-                <td><%= CompletedJob.time %></td>
-                <td><%= CompletedJob.status %></td>
+            <% completed_jobs.forEach(job => { %>
+            <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
+                <td><%= job.version %></td>
+                <td><%= job.taskType %></td>
+                <td><%= job.priority %></td>
+                <td><%= job.title %></td>
+                <td><%= job.url %></td>
+                <td>
+                    <% if (job.time) { %>
+                        <%= job.time %>
+                        <% if (job.date) { %>
+                            <%= job.date %>
+                        <% } %>
+                    <% } else if (job.cron_exp) { %>
+                        <%= job.schedule %>
+                    <% } %>
+                </td>
+                <td><%= job.status %></td>
+                <td>
+                    <form action="/delete" method="post">
+                        <input type="hidden" name="id" value="<%= job._id %>">
+                        <button type="submit" onclick="showAlert()">Delete</button>
+                    </form>
+                </td>
             </tr>
             <% }) %>
         </tbody>
     </table>
 
     <script>
+        
         function showFields() {
             var taskType = document.getElementById("taskType").value;
             var timeDateFields = document.getElementById("timeDateFields");
