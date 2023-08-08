@@ -1,0 +1,86 @@
+
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .radio-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .radio-container label {
+            margin-right: 10px;
+        }
+
+        form.main {
+            width: 400px;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: rgba(108, 163, 177, 0.738);
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            
+            border: 0;
+                    outline: 0;
+                    cursor: pointer;
+                    color: rgb(0, 0, 0);
+                    background-color: rgba(108, 163, 177, 0.738);
+                    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    padding: 4px 8px;
+                    display: inline-block;
+                    min-height: 28px;
+                    transition: background-color .24s,box-shadow .24s;
+                  
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: left;
+        }
+        tr.event {
+        background-color: rgba(108, 163, 177, 0.17);
+        }
