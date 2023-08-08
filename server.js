@@ -4,7 +4,6 @@ const cronParser = require('cron-parser');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { getNextEventExecutionTime } = require('./next_event_execution.js');
 const { Job } = require('./job_model.js');
-const { Completed_Jobs } = require('./completed_job_model.js');
 const { Worker } = require('worker_threads');
 const { updateJobs } = require("./update_created_jobs.js");
 
@@ -24,12 +23,12 @@ worker.on('exit', (code) => {
 });
 
 app.get('/', (req, res, next) => {
-    Promise.all([
-        Job.find().exec(),
-        Completed_Jobs.find().exec()
-    ])
-        .then(([jobs, completed_jobs]) => {
-            res.render('create_task', { jobs, completed_jobs });
+    Job.find().exec()
+        .then(jobs => {
+            const completed_jobs = jobs.filter(job => job.status === 'successful' || job.status === 'failed');
+            const pending_jobs = jobs.filter(job => job.status === 'pending');
+
+            res.render('create_task', { completed_jobs, pending_jobs });
         })
         .catch(err => {
             console.error('Error fetching data:', err);
@@ -50,7 +49,6 @@ app.post('/', async (req, res) => {
         }
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
-        job.status = 'created';
 
     } else if (taskType === 'cron') {
         try {
@@ -61,9 +59,7 @@ app.post('/', async (req, res) => {
         }
         const nextCronExecutionTime = getNextCronExecutionTime(cron_exp);
         job.schedule = nextCronExecutionTime;
-        job.status = 'created';
     }
-
 
     try {
         await job.save();
@@ -77,7 +73,6 @@ app.post('/', async (req, res) => {
 app.post('/delete', async (req, res) => {
     const { id } = req.body;
     await Job.findByIdAndDelete(id);
-    await Completed_Jobs.findByIdAndDelete(id);
     res.redirect('/');
 });
 
