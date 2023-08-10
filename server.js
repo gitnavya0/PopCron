@@ -11,7 +11,6 @@ const app = express();
 const port = 3000;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
 
 app.set('view engine', 'ejs');
 
@@ -37,6 +36,14 @@ app.get('/', (req, res, next) => {
         });
 });
 
+const getCurrentTime = () => {
+    const currentTimeUTC = Date.now();
+    const currentTimeIST = new Date(currentTimeUTC + (5 * 60 + 30) * 60 * 1000);
+    currentTimeIST.setSeconds(0);
+    currentTimeIST.setMilliseconds(0);
+    return currentTimeIST.toISOString();
+};
+
 app.post('/', async (req, res) => {
     const { taskType, title, description, url, time, date, cron_exp, priority } = req.body;
     const job = new Job({ taskType, title, description, url, time, date, cron_exp, priority });
@@ -50,6 +57,12 @@ app.post('/', async (req, res) => {
         }
         const nextEventExecutionTime = getNextEventExecutionTime(time, date);
         job.schedule = nextEventExecutionTime;
+
+        const currentTimeIST = getCurrentTime();
+        if (job.schedule < currentTimeIST) {
+            res.send('<script>alert("Invalid time. Please enter a time in the future"); window.location.href="/";</script>');
+            return;
+        }
 
     } else if (taskType === 'cron') {
         try {
