@@ -3,9 +3,8 @@ const http = require('http');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { Job } = require('./job_model.js');
 
-const sendGetRequests = async () => {
+const sendGetRequests = async (executable_jobs) => {
     try {
-        const executable_jobs = await fetchJobs();
 
         if (executable_jobs.length === 0) {
             console.log("No jobs to execute.");
@@ -33,9 +32,21 @@ const sendGetRequests = async () => {
                 console.error(`Error while fetching job ${_id} from URL ${url}:`, error.message);
             } finally {
                 if (job.taskType === 'cron' && responseReceived == false) {
-                    job.status = 'failed';
-                    job.time = job.time;
+                    job.version += 1;
+                    job.schedule = getNextCronExecutionTime(job.cron_exp);
                     await job.save();
+
+                    const completedCron = {
+                        version: job.version - 1,
+                        taskType: job.taskType,
+                        priority: job.priority,
+                        title: job.title,
+                        url: job.url,
+                        time: new Date(),
+                        status: 'failed'
+                    };
+
+                    Job.create(completedCron);
                 }
                 else if (job.taskType === 'cron' && responseReceived == true) {
                     job.version += 1;
