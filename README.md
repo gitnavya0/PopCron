@@ -29,4 +29,4 @@ to execute run the following commands -
  in the popcron directory and
  
 ``` node sendMail.js ```
- in the mailApi directory 
+ in the mailAPI directory 
