@@ -16,9 +16,9 @@ once a task is executed it is moved to another collection called "completed_jobs
 after execution of a cron its version and next execution time is updated.
 
 if due to some error the server was down for some time and the tasks could not be executed, the following is done:
-- if a cron - its next execution time is calculated with respect to the current time (when server started again)
-- if an event - its runs the next mintue the server starts.
+- if a low priority cron - its next execution time is calculated with respect to the current time (when server started again)
+- if an event or high priority cron - its runs as soon as the server starts.
 
 to make this more dynamic the main localhost:3000 page is refreshed every mintue and reflects all updates that have occured. 
 
-mailApi - sends n email to the user with the title and time of execution of the task. 
+mailApi - sends n email to the user with the title and time of execution of the task. (runs on localhost 4000).
