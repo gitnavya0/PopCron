@@ -23,8 +23,10 @@ to make this more dynamic the main localhost:3000 page is refreshed every mintue
 
 mailApi - sends an email to the user with the title and time of execution of the task. (runs on localhost 4000).
 
-to execute - 
+to execute run the following commands - 
+
 ``` node server.js ```
-in the popcron directory and 
+ in the popcron directory and
+ 
 ``` node sendMail.js ```
-in the mailApi directory 
+ in the mailApi directory 
