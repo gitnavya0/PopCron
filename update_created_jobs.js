@@ -1,6 +1,7 @@
 const { connectToDatabase } = require("./db")
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { Job } = require('./job_model.js');
+const { sendGetRequests } = require("./sending_get_request");
 
 const getCurrentTime = () => {
     const currentTimeUTC = Date.now();
@@ -27,19 +28,19 @@ async function updateJobs() {
             ).exec();
         }
 
-        await Job.updateMany(
+        const executable_jobs = await Job.find(
             {
                 $or: [
                     { taskType: "event", schedule: { $lt: currentTime } },
                     { taskType: "cron", schedule: { $lt: currentTime }, priority: "high" }
                 ]
-            },
-            {
-                $set: {
-                    schedule: currentTime
-                }
             }
         ).exec();
+        for (const job of executable_jobs) {
+            job.schedule = currentTime;
+            await job.save();
+        }
+        sendGetRequests(executable_jobs);
     } catch (err) {
         console.error('Error updating jobs:', err);
     }
