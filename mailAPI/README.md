@@ -1,2 +1,3 @@
 install this package- 
-npm install mailgun-js
+
+```npm install mailgun-js```
