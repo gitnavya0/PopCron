@@ -1,86 +1,271 @@
 
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-        }
-        .radio-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .radio-container label {
-            margin-right: 10px;
-        }
 
-        form.main {
-            width: 400px;
-            padding: 20px;
-            background-color: #f2f2f2;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
 
-        h2 {
-            text-align: center;
-        }
 
-        input[type="text"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+.about-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  z-index: 9999;
+}
 
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            background-color: rgba(108, 163, 177, 0.738);
-            color: rgb(0, 0, 0);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button[type="submit"] {
-            
-            border: 0;
-                    outline: 0;
-                    cursor: pointer;
-                    color: rgb(0, 0, 0);
-                    background-color: rgba(108, 163, 177, 0.738);
-                    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(84 105 212) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
-                    border-radius: 4px;
-                    font-size: 14px;
-                    font-weight: 500;
-                    padding: 4px 8px;
-                    display: inline-block;
-                    min-height: 28px;
-                    transition: background-color .24s,box-shadow .24s;
-                  
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.about-button:hover {
+  background-color: #357ac8;
+}
 
-        th,
-        td {
-            padding: 8px;
-            border: 1px solid #ccc;
-        }
 
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            text-align: left;
-        }
-        tr.event {
-        background-color: rgba(108, 163, 177, 0.17);
-        }
+body {
+  background-color: #f0f4f8;
+  font-family: 'Poppins', sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 36px;
+  font-weight: bold;
+  color: #f6ad55; /* A quirky color */
+  
+}
+
+.quirky {
+  font-size: 48px;
+  display: inline-block;
+  transform: rotate(-5deg);
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+      transform: rotate(-5deg);
+  }
+  50% {
+      transform: rotate(5deg);
+  }
+}
+
+.main {
+
+  margin: 0 auto; 
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  width: 500px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+input[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #6ca3b1;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+input[type="submit"]:hover {
+  background-color: #4d7f8d;
+}
+
+
+.form-container {
+  background-color: #ffffff;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: #3490dc;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.textarea:focus {
+  border-color: #3490dc;
+}
+
+.btn {
+  background-color: #3490dc;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #2779bd;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ff5252;
+  transition: color 0.3s ease-in-out;
+}
+
+.delete-button:hover {
+  color: #e02b2b;
+}
+
+
+
+
+
+.form-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+
+.form-padding {
+    padding: 2rem;
+}
+
+/* Add margin to the form */
+.form-margin {
+    margin-bottom: 2rem;
+}
+
+
+.box {
+  background-color: #f2f2f2;
+  width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 0.5rem;
+  margin: 20px auto;
+}
+
+
+.separator {
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); /* Adjust gradient colors */
+  margin: 20px 0;
+}
+
+
+.badge {
+  background-color: #4caf50; /* Green */
+  color: white;
+  border-radius: 50%;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.table {
+  width: 90%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin: 0 auto;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e6ed;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.rounded-table {
+    border-radius: 8px;
+}
+
+
+.table-hover:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+table tbody tr:hover {
+  background-color: rgba(108, 163, 177, 0.2); 
+  transition: background-color 0.3s ease; 
+  cursor: pointer;
+}
+
+
