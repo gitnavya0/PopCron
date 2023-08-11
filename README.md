@@ -21,4 +21,10 @@ if due to some error the server was down for some time and the tasks could not b
 
 to make this more dynamic the main localhost:3000 page is refreshed every mintue and reflects all updates that have occured. 
 
-mailApi - sends n email to the user with the title and time of execution of the task. (runs on localhost 4000).
+mailApi - sends an email to the user with the title and time of execution of the task. (runs on localhost 4000).
+
+to execute - 
+``` node server.js ```
+in the popcron directory and 
+``` node sendMail.js ```
+in the mailApi directory 
