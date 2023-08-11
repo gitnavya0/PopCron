@@ -1,11 +1,9 @@
-const { fetchJobs } = require('./fetch_jobs.js');
 const http = require('http');
 const { getNextCronExecutionTime } = require('./next_cron_execution.js');
 const { Job } = require('./job_model.js');
 
-const sendGetRequests = async () => {
+const sendGetRequests = async (executable_jobs) => {
     try {
-        const executable_jobs = await fetchJobs();
 
         if (executable_jobs.length === 0) {
             console.log("No jobs to execute.");
@@ -13,7 +11,7 @@ const sendGetRequests = async () => {
         }
 
         for (const job of executable_jobs) {
-            const { url, _id } = job;
+            const { url, _id, title, time } = job;
 
             let responseReceived = false;
 
@@ -33,9 +31,21 @@ const sendGetRequests = async () => {
                 console.error(`Error while fetching job ${_id} from URL ${url}:`, error.message);
             } finally {
                 if (job.taskType === 'cron' && responseReceived == false) {
-                    job.status = 'failed';
-                    job.time = job.time;
+                    job.version += 1;
+                    job.schedule = getNextCronExecutionTime(job.cron_exp);
                     await job.save();
+
+                    const completedCron = {
+                        version: job.version - 1,
+                        taskType: job.taskType,
+                        priority: job.priority,
+                        title: job.title,
+                        url: job.url,
+                        time: new Date(),
+                        status: 'failed'
+                    };
+
+                    Job.create(completedCron);
                 }
                 else if (job.taskType === 'cron' && responseReceived == true) {
                     job.version += 1;
@@ -58,6 +68,28 @@ const sendGetRequests = async () => {
                     job.status = responseReceived ? 'successful' : 'failed';
                     await job.save();
                 }
+                const encodedTitle = encodeURIComponent(title);
+
+                const sendMailOptions = {
+                    hostname: 'localhost',
+                    port: 4000,
+                    path: `/send-email?status=${responseReceived}&title=${encodedTitle}`,
+                    method: 'GET'
+                };
+
+                const sendMailRequest = http.request(sendMailOptions, (response) => {
+                    if (response.statusCode === 200) {
+                        console.log(`GET request to sendMail.js for job ${_id} sent successfully`);
+                    } else {
+                        console.error(`Received a non-successful response for job ${_id} from sendMail.js`);
+                    }
+                });
+
+                sendMailRequest.on('error', (error) => {
+                    console.error(`Error while sending GET request to sendMail.js for job ${_id}:`, error.message);
+                });
+
+                sendMailRequest.end();
             }
         }
     } catch (error) {
