@@ -1,191 +1,221 @@
-    <!DOCTYPE html>
-    <html>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Task Form and List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <head>
-        <title>Task Form and List</title>
-        <link rel="stylesheet" href="css/create_task.css">
-        
-    </head>
+
+    <link rel="stylesheet" href="public\css\tailwind.css">
+    <link rel="stylesheet" href="css/create_task.css">
     
-<body>
-    <form class="main" action="/" method="post">
-        <h2>Create a Task</h2>
+</head>
 
-        <label for="taskType">Task Type:</label>
-        <select id="taskType" name="taskType" onchange="showFields()">
-            <option value="" disabled selected>Select</option>
-            <option value="event">Event</option>
-            <option value="cron">Cron</option>
-        </select>
+<body class="bg-gray-100">
+    <a href="https://github.com/gitnavya0/PopCron/tree/main" target="_blank" class="about-button">
+        <i class="fab fa-github"></i> About Us
+    </a>
+<div class="form-container">
+
+<h1 class="heading">Pop<span class="quirky">Cron</span></h1>
+
+<form class="main" action="/" method="post">
+    <h2>Create a Task</h2>
+
+    <label for="taskType">Task Type:</label>
+    <select id="taskType" name="taskType" onchange="showFields()">
+        <option value="" disabled selected>Select</option>
+        <option value="event">Event</option>
+        <option value="cron">Cron</option>
+    </select>
+
+    <br><br>
+
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title"required>
+
+    <br><br>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <br><br>
+
+    <label for="url">URL:</label>
+    <input type="text" id="url" name="url" required>
+
+    <br><br>
+
+    <div id="timeDateFields" style="display: none;">
+        <label for="time">Time (format - hh:mm AM/PM) :</label>
+        <input type="text" id="time" name="time">
 
         <br><br>
 
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title"required>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date">
 
         <br><br>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required></textarea>
+    </div>
+    <div id="cronFields" style="display: none;">
+        <label for="cronExpression">Cron Expression:</label>
+        <input type="text"  name="cron_exp">
 
         <br><br>
 
-        <label for="url">URL:</label>
-        <input type="text" id="url" name="url" required>
-
-        <br><br>
-
-        <div id="timeDateFields" style="display: none;">
-            <label for="time">Time (format - hh:mm AM/PM) :</label>
-            <input type="text" id="time" name="time">
-
-            <br><br>
-
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date">
-
-            <br><br>
-
+        <label for="priority">Enter priority:</label>
+        <div class="radio-container">
+        <label for="highPriority">High</label>
+        <input type="radio" id="highPriority" name="priority" value="high">
+        <label for="lowPriority">Low</label>
+        <input type="radio" id="lowPriority" name="priority" value="low">
         </div>
-        <div id="cronFields" style="display: none;">
-            <label for="cronExpression">Cron Expression:</label>
-            <input type="text"  name="cron_exp">
+        <p style="color: rgb(120, 118, 118); font-style: italic;"> (in case of a server reboot, high priority crons are executed as soon as server 
+            restarts and low priority ones are executed on their next time of execution.) </p>
+        <br><br>
 
-            <br><br>
+    </div>
+    <input type="submit" value="Submit">
 
-            <label for="priority">Enter priority:</label>
-            <div class="radio-container">
-            <label for="highPriority">High</label>
-            <input type="radio" id="highPriority" name="priority" value="high">
-            <label for="lowPriority">Low</label>
-            <input type="radio" id="lowPriority" name="priority" value="low">
-            </div>
-            <p style="color: rgb(120, 118, 118); font-style: italic;"> (in case of a server reboot, high priority crons are executed as soon as server 
-                restarts and low priority ones are executed on their next time of execution.) </p>
-            <br><br>
+</form>
+</div>
+<br>
+<br>
 
-        </div>
-        <input type="submit" value="Submit">
 
-    </form>
 
-    <h3>List of Tasks Created:</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Version</th>
-                <th>Type</th>
-                <th>Priority</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>URL</th>
-                <th>Time/Cron Expression</th>
-                <th>Scheduled at</th>
-                <th>Status</th>
-                <th> </th>
-            </tr>
-        </thead>
-        <tbody>
-            <% pending_jobs.forEach(job => { %>
-            <tr class="<%= pending_jobs.taskType === 'event' ? 'event' : '' %>">
-                <td><%= job.version %></td>
-                <td><%= job.taskType %></td>
-                <td><%= job.priority %></td>
-                <td><%= job.title %></td>
-                <td><%= job.description %></td>
-                <td><%= job.url %></td>
-                <td>
-                    <% if (job.time) { %>
-                        <%= job.time %>
-                        <% if (job.date) { %>
-                            <%= job.date %>
-                        <% } %>
-                    <% } else if (job.cron_exp) { %>
-                        <%= job.cron_exp %>
+
+<div class="box">
+    
+    <h3 class="text-xl font-semibold mb-4">List of Tasks Created:</h3>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Type</th>
+            <th>Priority</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>URL</th>
+            <th>Time/Cron Expression</th>
+            <th>Scheduled at</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <% pending_jobs.forEach(job => { %>
+        <tr class="<%= pending_jobs.taskType === 'event' ? 'event' : '' %>">
+            <td><%= job.version %></td>
+            <td><%= job.taskType %></td>
+            <td><%= job.priority %></td>
+            <td><%= job.title %></td>
+            <td><%= job.description %></td>
+            <td><%= job.url %></td>
+            <td>
+                <% if (job.time) { %>
+                    <%= job.time %>
+                    <% if (job.date) { %>
+                        <%= job.date %>
                     <% } %>
-                </td>
-                <td><%= job.schedule %></td>
-                <td><%= job.status %></td>
-                <td>
-                    <form action="/delete" method="post">
-                        <input type="hidden" name="id" value="<%= job._id %>">
-                        <button type="submit" onclick="showAlert()">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            <% }) %>
-        </tbody>
-    </table>
+                <% } else if (job.cron_exp) { %>
+                    <%= job.cron_exp %>
+                <% } %>
+            </td>
+            <td><%= job.schedule %></td>
+            <td>
+                <span class="badge <%= job.status === 'successful' ? 'success-badge' : (job.status === 'pending' ? 'pending-badge' : 'error-badge') %>">
+                    <%= job.status %>
+                </span>
+            </td>
+            <td>
+                <form action="/delete" method="post">
+                    <input type="hidden" name="id" value="<%= job._id %>">
+                    <button type="submit" onclick="showAlert()">
+                    <i class="fas fa-trash-alt"></i> 
+                    </button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<br>
+<br>
 
-    <h3>List of Tasks Executed:</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Version</th>
-                <th>Type</th>
-                <th>Priority</th>
-                <th>Title</th>
-                <th>URL</th>
-                <th>Last Executed At</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% completed_jobs.forEach(job => { %>
-            <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
-                <td><%= job.version %></td>
-                <td><%= job.taskType %></td>
-                <td><%= job.priority %></td>
-                <td><%= job.title %></td>
-                <td><%= job.url %></td>
-                <td>
-                    <% if (job.time) { %>
-                        <%= job.time %>
-                        <% if (job.date) { %>
-                            <%= job.date %>
-                        <% } %>
-                    <% } else if (job.cron_exp) { %>
-                        <%= job.schedule %>
+<div class="separator"></div>
+
+<div class = "box">
+<h3 class="text-xl font-semibold mb-4">List of Tasks Executed:</h3>
+</div>
+
+<table class = "table" >
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Type</th>
+            <th>Priority</th>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Last Executed At</th>
+            <th>Status</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        <% completed_jobs.forEach(job => { %>
+        <tr class="<%= job.taskType === 'event' ? 'event' : '' %>">
+            <td><%= job.version %></td>
+            <td><%= job.taskType %></td>
+            <td><%= job.priority %></td>
+            <td><%= job.title %></td>
+            <td><%= job.url %></td>
+            <td>
+                <% if (job.time) { %>
+                    <%= job.time %>
+                    <% if (job.date) { %>
+                        <%= job.date %>
                     <% } %>
-                </td>
-                <td><%= job.status %></td>
-                <td>
-                    <form action="/delete" method="post">
-                        <input type="hidden" name="id" value="<%= job._id %>">
-                        <button type="submit" onclick="showAlert()">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            <% }) %>
-        </tbody>
-    </table>
+                <% } else if (job.cron_exp) { %>
+                    <%= job.schedule %>
+                <% } %>
+            </td>
+            <td><%= job.status %></td>
+            
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
 
-    <script>
-        
-        function showFields() {
-            var taskType = document.getElementById("taskType").value;
-            var timeDateFields = document.getElementById("timeDateFields");
-            var cronFields = document.getElementById("cronFields");
+<script>
+    
+    function showFields() {
+        var taskType = document.getElementById("taskType").value;
+        var timeDateFields = document.getElementById("timeDateFields");
+        var cronFields = document.getElementById("cronFields");
 
-            if (taskType === "event") {
-                timeDateFields.style.display = "block";
-                cronFields.style.display = "none";
-            } else if (taskType === "cron") {
-                timeDateFields.style.display = "none";
-                cronFields.style.display = "block";
-            }
+        if (taskType === "event") {
+            timeDateFields.style.display = "block";
+            cronFields.style.display = "none";
+        } else if (taskType === "cron") {
+            timeDateFields.style.display = "none";
+            cronFields.style.display = "block";
         }
-        function showAlert() {
-            alert("Task deleted!");
-        }
-        function refreshPage() {
-            location.reload();
-        }
-        setInterval(refreshPage, 60000);
+    }
+    function showAlert() {
+        alert("Task deleted!");
+    }
+    function refreshPage() {
+        location.reload();
+    }
+    setInterval(refreshPage, 60000);
 
-    </script>
+</script>
 </body>
 
 </html>
-
