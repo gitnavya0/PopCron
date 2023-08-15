@@ -11,24 +11,63 @@ const sendGetRequests = async (executable_jobs) => {
         }
 
         for (const job of executable_jobs) {
-            const { url, _id, title, time } = job;
+            const { url, _id, title } = job;
 
             let responseReceived = false;
+            let Error = '';
 
             try {
                 const response = await new Promise((resolve, reject) => {
                     http.get(url, (response) => resolve(response)).on('error', reject);
                 });
 
+                const urlMailOptionsMap = {
+                    'http://www.testingmcafeesites.com/testcat_al.html': {
+                        port: 3002,
+                        path: '/sendAttendanceReport',
+                        message: 'attendance report'
+                    },
+                    'http://www.testingmcafeesites.com/testcat_be.html': {
+                        port: 3003,
+                        path: '/send-weather-report',
+                        message: 'weather report'
+                    }
+                };
+
                 if (response.statusCode === 200) {
                     console.log(`Response received for job ${_id} from URL ${url}`);
                     responseReceived = true;
+                    if (url in urlMailOptionsMap) {
+                        const mailOptions = urlMailOptionsMap[url];
+
+                        const sendMailOptions = {
+                            hostname: 'localhost',
+                            port: mailOptions.port,
+                            path: mailOptions.path,
+                            method: 'GET'
+                        };
+
+                        const sendMailRequest = http.request(sendMailOptions, (response) => {
+                            if (response.statusCode === 200) {
+                                console.log(`GET request to sendMail.js for job ${_id} sent successfully to send ${mailOptions.message}`);
+                            } else {
+                                console.error(`Received a non-successful response for job ${_id} from sendMail.js to send ${mailOptions.message}`);
+                            }
+                        });
+
+                        sendMailRequest.on('error', (error) => {
+                            console.error(`Error while sending GET request to sendMail.js to send ${mailOptions.message} for job ${_id}:`, error.message);
+                        });
+
+                        sendMailRequest.end();
+                    }
                 } else {
                     console.error(`Received a non-successful response for job ${_id} from URL ${url}`);
                     responseReceived = false;
                 }
             } catch (error) {
                 console.error(`Error while fetching job ${_id} from URL ${url}:`, error.message);
+                Error = error.message;
             } finally {
                 if (job.taskType === 'cron' && responseReceived == false) {
                     job.version += 1;
@@ -68,12 +107,14 @@ const sendGetRequests = async (executable_jobs) => {
                     job.status = responseReceived ? 'successful' : 'failed';
                     await job.save();
                 }
+
                 const encodedTitle = encodeURIComponent(title);
+                const encodedError = encodeURIComponent(Error);
 
                 const sendMailOptions = {
                     hostname: 'localhost',
-                    port: 4000,
-                    path: `/send-email?status=${responseReceived}&title=${encodedTitle}`,
+                    port: 3001,
+                    path: `/send-email?status=${responseReceived}&title=${encodedTitle}&Error=${encodedError}`,
                     method: 'GET'
                 };
 
