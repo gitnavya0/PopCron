@@ -22,13 +22,13 @@ const sendGetRequests = async (executable_jobs) => {
                 });
 
                 const urlMailOptionsMap = {
-                    'http://localhost:3002/sendAttendanceReport': {
-                        port: 3002,
+                    'http://localhost:3001/sendAttendanceReport': {
+                        port: 3001,
                         path: '/sendAttendanceReport',
                         message: 'attendance report'
                     },
-                    'http://localhost:3003/sendWeatherReport': {
-                        port: 3003,
+                    'http://localhost:3001/sendWeatherReport': {
+                        port: 3001,
                         path: '/sendWeatherReport',
                         message: 'weather report'
                     }
@@ -49,7 +49,7 @@ const sendGetRequests = async (executable_jobs) => {
 
                         const sendMailRequest = http.request(sendMailOptions, (response) => {
                             if (response.statusCode === 200) {
-                                console.log(`GET request to sendMail.js for job ${_id} sent successfully to send ${mailOptions.message}`);
+                                console.log(`${mailOptions.message} sent successfully`);
                             } else {
                                 console.error(`Received a non-successful response for job ${_id} from sendMail.js to send ${mailOptions.message}`);
                             }
@@ -120,7 +120,7 @@ const sendGetRequests = async (executable_jobs) => {
 
                 const sendMailRequest = http.request(sendMailOptions, (response) => {
                     if (response.statusCode === 200) {
-                        console.log(`GET request to sendMail.js for job ${_id} sent successfully`);
+                        console.log(`Update mail for job ${_id} sent successfully`);
                     } else {
                         console.error(`Received a non-successful response for job ${_id} from sendMail.js`);
                     }
