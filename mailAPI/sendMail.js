@@ -8,6 +8,7 @@ const mailgun = require('mailgun-js');
 const OPENWEATHER_API_KEY = ' ';
 const API_KEY = ' ';
 const DOMAIN = ' ';
+const PORT = 3001;
 
 const agent = new https.Agent({
     rejectUnauthorized: false
@@ -17,6 +18,8 @@ const mg = mailgun({
     domain: DOMAIN,
     httpsAgent: agent
 });
+
+const app = express();
 
 const sendMail = async function (sender_email, receiver_email, email_subject, status, title, time, Error) {
     const data = {
@@ -45,37 +48,26 @@ const sendMail = async function (sender_email, receiver_email, email_subject, st
     }
 };
 
-const server1 = http.createServer((req, res) => {
-    if (req.method === 'GET' && req.url.startsWith('/send-email')) {
-        const urlParams = new URLSearchParams(req.url.split('?')[1]);
-        const status = urlParams.get('status') === 'true';
+app.get('/send-email', async (req, res) => {
+    const urlParams = new URLSearchParams(req.url.split('?')[1]);
+    const status = urlParams.get('status') === 'true';
 
-        const encodedTitle = urlParams.get('title');
-        const decodedTitle = decodeURIComponent(encodedTitle);
-        const encodedError = urlParams.get('Error');
-        const decodedError = decodeURIComponent(encodedError);
+    const encodedTitle = urlParams.get('title');
+    const decodedTitle = decodeURIComponent(encodedTitle);
+    const encodedError = urlParams.get('Error');
+    const decodedError = decodeURIComponent(encodedError);
 
-        const Time = new Date();
+    const Time = new Date();
 
-        const sender_email = ' ';
-        const receiver_email = ' ';
-        const email_subject = 'PopCron Update!';
+    const sender_email = ' ';
+    const receiver_email = ' ';
+    const email_subject = ' ';
 
-        sendMail(sender_email, receiver_email, email_subject, status, decodedTitle, Time, decodedError);
+    sendMail(sender_email, receiver_email, email_subject, status, decodedTitle, Time, decodedError);
 
-        res.statusCode = 200;
-        res.statusMessage = 'Email sent successfully';
-        res.end();
-    } else {
-        res.statusCode = 404;
-        res.statusMessage = 'Not Found';
-        res.end();
-    }
-});
-
-const PORT1 = 3001;
-server1.listen(PORT1, () => {
-    console.log(`Server1 is running on port ${PORT1}`);
+    res.statusCode = 200;
+    res.statusMessage = 'Email sent successfully';
+    res.end();
 });
 
 function calculateAttendance(row) {
@@ -100,6 +92,32 @@ function generateAttendanceReportHTML(attendanceReport) {
     html += '</tbody></table>';
     return html;
 }
+
+app.get('/sendAttendanceReport', async (req, res) => {
+    const sender_email = ' ';
+    const receiver_email = ' ';
+    const email_subject = 'PopCron Attendance report!';
+
+    const attendanceData = [];
+    fs.createReadStream('attendance.csv')
+        .pipe(csv())
+        .on('data', (row) => {
+            attendanceData.push(row);
+        })
+        .on('end', async () => {
+            const attendanceReport = attendanceData.map((row) => ({
+                studentName: row.name,
+                attendance: calculateAttendance(row),
+            }));
+
+            const email_body = generateAttendanceReportHTML(attendanceReport);
+            sendAttendanceMail(sender_email, receiver_email, email_subject, email_body);
+
+            res.statusCode = 200;
+            res.statusMessage = 'Email sent successfully';
+            res.end();
+        });
+});
 
 const sendAttendanceMail = async function (sender_email, receiver_email, email_subject, email_body) {
     const data = {
@@ -126,44 +144,6 @@ const sendAttendanceMail = async function (sender_email, receiver_email, email_s
     }
 };
 
-const server2 = http.createServer((req, res) => {
-    if (req.method === 'GET' && req.url.startsWith('/sendAttendanceReport')) {
-
-        const sender_email = ' ';
-        const receiver_email = ' ';
-        const email_subject = 'PopCron Attendance report!';
-
-        const attendanceData = [];
-        fs.createReadStream('attendance.csv')
-            .pipe(csv())
-            .on('data', (row) => {
-                attendanceData.push(row);
-            })
-            .on('end', async () => {
-                const attendanceReport = attendanceData.map((row) => ({
-                    studentName: row.name,
-                    attendance: calculateAttendance(row),
-                }));
-
-                const email_body = generateAttendanceReportHTML(attendanceReport);
-                sendAttendanceMail(sender_email, receiver_email, email_subject, email_body);
-
-                res.statusCode = 200;
-                res.statusMessage = 'Email sent successfully';
-                res.end();
-            });
-    } else {
-        res.statusCode = 404;
-        res.statusMessage = 'Not Found';
-        res.end();
-    }
-});
-
-const PORT2 = 3002;
-server2.listen(PORT2, () => {
-    console.log(`Server2 is running on port ${PORT2}`);
-});
-
 const sendWeatherMail = async function (sender_email, receiver_email, email_subject, email_text) {
     const data = {
         from: sender_email,
@@ -189,49 +169,45 @@ const sendWeatherMail = async function (sender_email, receiver_email, email_subj
     }
 };
 
-const server3 = http.createServer(async (req, res) => {
-    if (req.method === 'GET' && req.url.startsWith('/sendWeatherReport')) {
-        const receiver_email = ' ';
-        const sender_email = ' ';
-        const email_subject = 'PopCron Weather Report';
+app.get('/sendWeatherReport', async (req, res) => {
+    const receiver_email = ' ';
+    const sender_email = ' ';
+    const email_subject = 'PopCron Weather Report';
 
-        const city = 'Bangalore';
-        const openWeatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}`;
+    const city = 'Bangalore';
+    const openWeatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}`;
 
-        try {
-            https.get(openWeatherURL, (response) => {
-                let body = '';
+    try {
+        https.get(openWeatherURL, (response) => {
+            let body = '';
 
-                response.on('data', (chunk) => {
-                    body += chunk;
-                });
-
-                response.on('end', () => {
-                    const weatherData = JSON.parse(body);
-                    const weatherDescription = weatherData.weather[0].description;
-                    const temperature = (weatherData.main.temp - 273.15).toFixed(2);
-
-                    const email_text = `The weather in ${city} is currently ${weatherDescription}. The temperature is ${temperature}°C.`;
-                    sendWeatherMail(sender_email, receiver_email, email_subject, email_text);
-
-                    res.statusCode = 200;
-                    res.statusMessage = 'Email sent successfully';
-                    res.end();
-                });
+            response.on('data', (chunk) => {
+                body += chunk;
             });
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-            res.statusCode = 500;
-            res.statusMessage = 'Internal Server Error';
-            res.end();
-        }
-    } else {
-        res.statusCode = 404;
-        res.statusMessage = 'Not Found';
+
+            response.on('end', () => {
+                const weatherData = JSON.parse(body);
+                const weatherDescription = weatherData.weather[0].description;
+                const temperature = (weatherData.main.temp - 273.15).toFixed(2);
+
+                const email_text = `The weather in ${city} is currently ${weatherDescription}. The temperature is ${temperature}°C.`;
+                sendWeatherMail(sender_email, receiver_email, email_subject, email_text);
+
+                res.statusCode = 200;
+                res.statusMessage = 'Email sent successfully';
+                res.end();
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        res.statusCode = 500;
+        res.statusMessage = 'Internal Server Error';
         res.end();
     }
 });
-const PORT3 = 3003;
-server3.listen(PORT3, () => {
-    console.log(`Server3 is running on port ${PORT3}`);
+
+const server = http.createServer(app);
+
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
